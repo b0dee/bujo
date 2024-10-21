@@ -1,4 +1,4 @@
-# [BuJo]()
+# BuJo - Bullet Journal
 
 A decently customisable bullet journalling cli written in bash 
 
