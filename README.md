@@ -80,9 +80,16 @@ Available placeholders for filename:
 - `%w` - Week
 - `%d` - Day
 
+## Roadmap
+- [ ] Completion suggestions (for collections)
+
 ## FAQ
 
-### Why no 'rm' command
+## Is it safe?
+
+bujo cli only ever appends to files provided, nothing will be overwritten :)
+
+## Why no 'rm' command
 
 It's easy enough to do yourself, safer too.
 
