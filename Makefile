@@ -1,3 +1,3 @@
 install:
-	cp bujo.sh /usr/local/bin/bujo
+	cp -f bujo.sh /usr/local/bin/bujo
 
