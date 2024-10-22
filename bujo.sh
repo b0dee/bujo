@@ -7,6 +7,7 @@ readonly BUJO_ROOT="${BUJO_ROOT:=$HOME/.bujo}"
 readonly BUJO_EDITOR="${BUJO_EDITOR:=$EDITOR}"
 readonly BUJO_FILENAME="${BUJO_FILENAME:=%y%m%w}"
 readonly BUJO_TIMESTAMP_FORMAT="${BUJO_TIMESTAMP_FORMAT:=%y-%m-%d@%H:%M}"
+readonly BUJO_FILE_EXT="${BUJO_FILE_EXT:=.md}"
 BUJO_INCLUDE_TIMESTAMP="${BUJO_INCLUDE_TIMESTAMP:=false}"
 OPEN_EDITOR=false
 declare -A centuryCodes=( [17]=4 [18]=2 [19]=0 [20]=6 [21]=4 [22]=2 [23]=0 )
@@ -26,20 +27,12 @@ quickhelp() {
   echo "  -c|--collection <name>  Specify collection (filename). Accepts subpaths, i.e. docs/collections"
   echo "                          Append trailing slash to denote directory."
   echo "  -o|--open               Open editor instead of exiting"
-  echo "  -T0                     Do not include timestamp (default unless configured)"
   echo "  -T                      Include timestamp"
+  echo "  -T0                     Do not include timestamp (default unless configured)"
   echo "  -h|                     Print short help."
   echo "  --help                  Print full help."
   echo "  -H|--heading <title>    Specify custom title (collection name if ommitted)" 
-  echo "  -d|--debug              Print debug messages"
-  echo ""
-  echo "Pattern Substitutions:"
-  echo "  %y - Year"
-  echo "  %m - Month"
-  echo "  %d - Day"
-  echo "  %w - Week of month (based off \$BUJO_WEEK_START)"
-  echo "  %H - Hour"
-  echo "  %M - Minute"
+  #echo "  -d|--debug              Print debug messages"
 }
 
 fullhelp() { 
@@ -50,7 +43,16 @@ fullhelp() {
   echo "  \$BUJO_WEEK_START             Day to use as first day of week (from 0 to 6, 0 being Sunday, 6 being Saturday). Defaults to 1 (Monday)"
   echo "  \$BUJO_EDITOR                 Editor to use, defaults to \$EDITOR"
   echo "  \$BUJO_FILENAME               Filename format to use when not specifying collection"
+  echo "  \$BUJO_FILE_EXT               File extension to use for notes. Default is .md"
   echo "  \$BUJO_INCLUDE_TIMESTAMP      Whether to log a timestamp before each action. Is overwritten by parameters"
+  echo ""
+  echo "Pattern Substitutions:"
+  echo "  %y - Year"
+  echo "  %m - Month"
+  echo "  %d - Day"
+  echo "  %w - Week of month (based off \$BUJO_WEEK_START)"
+  echo "  %H - Hour"
+  echo "  %M - Minute"
   echo ""
   echo "Entries can be written naturally with no need for quoting, i.e."
   echo "  bujo Today I tried bujo cli"
@@ -225,9 +227,9 @@ main() {
       collection="$COLLECTION/$BUJO_FILENAME"
     fi
     # TODO - If collection ends in '/' it should treat collection provided as a folder and append default filename 
-    filepath+=$(stringfmt "${collection/"\.md"/""}.md";) 
+    filepath+=$(stringfmt "${collection/$BUJO_FILE_EXT/""}${BUJO_FILE_EXT}";) 
   else
-    filepath+=$(stringfmt "${BUJO_FILENAME}.md")
+    filepath+=$(stringfmt "${BUJO_FILENAME}${BUJO_FILE_EXT}")
   fi
   mkdir -p $(dirname $filepath)
 
@@ -235,7 +237,7 @@ main() {
     if ! [[ -z ${HEADING} ]]; then 
       printf "%s\n\n" "# $(stringfmt "${HEADING}")" >> "${filepath}"
     else
-      printf "%s\n\n" "# $(basename -s .md $filepath)" >> ${filepath}
+      printf "%s\n\n" "# $(basename -s $BUJO_FILE_EXT $filepath)" >> ${filepath}
     fi
   fi
 

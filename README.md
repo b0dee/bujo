@@ -1,4 +1,4 @@
-# [BuJo]()
+# BuJo - Bullet Journal
 
 A decently customisable bullet journalling cli written in bash 
 
@@ -48,6 +48,7 @@ Configuration:
   $BUJO_ROOT                   Base path to use, defaults to ~/.bujo
   $BUJO_WEEK_START             Day to use as first day of week (from 0 to 6, 0 being Sunday, 6 being Saturday). Defaults to 1 (Monday)
   $BUJO_EDITOR                 Editor to use, defaults to $EDITOR
+  $BUJO_FILE_EXT               File extension to use for notes. Default is .md
   $BUJO_FILENAME               Filename format to use when not specifying collection
   $BUJO_INCLUDE_TIMESTAMP      Whether to log a timestamp before each action. Is overwritten by parameters
 
@@ -80,9 +81,16 @@ Available placeholders for filename:
 - `%w` - Week
 - `%d` - Day
 
+## Roadmap
+- [ ] Completion suggestions (for collections)
+
 ## FAQ
 
-### Why no 'rm' command
+## Is it safe?
+
+bujo cli only ever appends to files provided, nothing will be overwritten :)
+
+## Why no 'rm' command
 
 It's easy enough to do yourself, safer too.
 
