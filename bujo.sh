@@ -245,11 +245,11 @@ main() {
     if [[ -z ${content} ]]; then fatal "Cannot create task/todo without input string"; fi
     content="- [ ] ${content}"
 
-    local taskregex="^\s*(- |\* |+ )"
-    if ! [[ $(tail -n 1 "${filepath}") =~ $taskregex ]]; then
-      content="\n ${content}"
-    fi
   else
+    local taskregex="^ *[-*+]"
+    if [[ "$(tail -n 1 "${filepath}")" =~ $taskregex ]]; then
+      content="\n${content}"
+    fi
     content="${content}\n"
   fi
 
