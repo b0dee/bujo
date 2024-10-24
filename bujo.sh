@@ -231,13 +231,13 @@ main() {
   else
     filepath+=$(stringfmt "${BUJO_FILENAME}${BUJO_FILE_EXT}")
   fi
-  mkdir -p $(dirname $filepath)
+  mkdir -p $(dirname "$filepath")
 
   if ! [[ -f "${filepath}" ]]; then
     if ! [[ -z ${HEADING} ]]; then 
-      printf "%s\n\n" "# $(stringfmt "${HEADING}")" >> "${filepath}"
+      printf "%s\n\n" "# $(stringfmt "${HEADING}" | sed -r "s/( *[a-z])([a-z]+)( |$)/\U\1\L\2\3/g")" >> "${filepath}"
     else
-      printf "%s\n\n" "# $(basename -s $BUJO_FILE_EXT $filepath)" >> ${filepath}
+      printf "%s\n\n" "# $(basename -s ${BUJO_FILE_EXT} "${filepath}" | sed -r "s/( *[a-z])([a-z]+)( |$)/\U\1\L\2\3/g")" >> "${filepath}"
     fi
   fi
 
@@ -263,7 +263,7 @@ main() {
       (cat; printf "\n") >> "${filepath}"
       printf "\`\`\`\n" >> "${filepath}"
     else
-      eval "${BUJO_EDITOR}" "${filepath}"
+      eval "${BUJO_EDITOR}" "'${filepath}'"
       exit 0
     fi
   else
@@ -271,7 +271,8 @@ main() {
   fi
 
   if $OPEN_EDITOR; then
-    eval "${BUJO_EDITOR}" "${filepath}"
+    echo "eval ${BUJO_EDITOR} '${filepath}'"
+    eval "${BUJO_EDITOR}" "'${filepath}'"
   fi
 
 }
