@@ -271,7 +271,6 @@ main() {
   fi
 
   if $OPEN_EDITOR; then
-    echo "eval ${BUJO_EDITOR} '${filepath}'"
     eval "${BUJO_EDITOR}" "'${filepath}'"
   fi
 
