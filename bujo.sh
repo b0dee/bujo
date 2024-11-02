@@ -228,6 +228,25 @@ titlecase() {
   echo "$1" | sed -r "s/( *[a-z])([a-z]+)( |$)/\U\1\L\2\3/g"
 }
 
+# Args: file ext
+extHeadingPrefix() { 
+  if [[ -z $1 ]]; then fatal "extHeadingPrefix() expects file extension string to check"; fi
+  case $1 in
+    .sql)
+      echo "-- "
+      ;;
+    .c|.h)
+      echo "// "
+      ;;
+    .bat|.cmd)
+      echo ":: "
+      ;;
+    *)
+      echo "# "
+      ;;
+  esac
+}
+
 main() { 
   local content="${INPUT_STRING[@]}"
   local filepath="${BUJO_ROOT/"~"/"$HOME"}/"
@@ -250,7 +269,7 @@ main() {
 
   if ! [[ -f "${filepath}" ]]; then
     local heading="${HEADING:=$(basename -s "${fext}" "${filepath}")}"
-    printf "%s\n\n" "# $(titlecase "${heading}")" >> "${filepath}"
+    printf "%s\n\n" "$(extHeadingPrefix $fext) $(titlecase "${heading}")" >> "${filepath}"
   fi
 
   if ! [[ -z ${TASK} ]]; then 
