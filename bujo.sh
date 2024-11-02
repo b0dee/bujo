@@ -251,6 +251,7 @@ main() {
   local content="${INPUT_STRING[@]}"
   local filepath="${BUJO_ROOT/"~"/"$HOME"}/"
   local fname="${BUJO_FILENAME}"
+  local fpath="${fname}"
   local fext=${BUJO_FILE_EXT}
   if ! [[ -z ${COLLECTION} ]]; then 
     local dirregex="/$"
@@ -261,10 +262,9 @@ main() {
     fi
     fname=$(basename -- "${collection}")
     if [[ $(basename -- "${collection}") =~ ${extregex} ]]; then fext=".${fname##*.}"; fi
-    filepath+=$(stringfmt "${collection/$fext/""}${fext}";) 
-  else
-    filepath+=$(stringfmt "${fname}${fext}")
+    fpath="${collection}"
   fi
+  filepath+=$(stringfmt "${fpath/$fext/""}${fext}";) 
   mkdir -p $(dirname "$filepath")
 
   if ! [[ -f "${filepath}" ]]; then
