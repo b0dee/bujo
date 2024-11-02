@@ -2,7 +2,7 @@
 
 set -e
 
-readonly BUJO_WEEK_START="${BUJO_WEEK_START:1}"
+readonly BUJO_WEEK_START="${BUJO_WEEK_START:=1}"
 readonly BUJO_ROOT="${BUJO_ROOT:=$HOME/.bujo}"
 readonly BUJO_EDITOR="${BUJO_EDITOR:=$EDITOR}"
 readonly BUJO_FILENAME="${BUJO_FILENAME:=%y%m%w}"
@@ -98,11 +98,12 @@ getWeekDay() {
   local year=$1
   local month=$2
   local day=$3
-  local year_s=$(expr $year / 100)
+  local year_c=$(expr $year / 100)
+  local year_s=$(expr $year % 100)
   local leap=$(isLeap $year)
   yearCode=$(expr $(expr $year_s + $(expr $year_s / 4)) % 7)
   monthCode=${monthCodes[$month]}
-  echo $(expr $yearCode + $monthCode + ${centuryCodes[$(expr $year / 100)]} + $day - $leap)
+  echo $(expr $(expr $yearCode + $monthCode + ${centuryCodes[${year_c}]} + $day - $leap) % 7)
 }
 
 # Args: year,month,day
@@ -111,26 +112,28 @@ getWeekOfMonth() {
   local year=$1
   local month=$2
   local day=$3
-  firstDayOfMonth=$(getWeekDay $year $month $day)
+  firstDayOfMonth=$(getWeekDay $year $month 1)
 
   if [[ $BUJO_WEEK_START -gt $firstDayOfMonth ]]; then
     firstWeekStartOfMonth=$(expr $BUJO_WEEK_START - $firstDayOfMonth)
   else
-    firstWeekStartOfMonth=$(expr 7 % $firstDayOfMonth)
+    firstWeekStartOfMonth=$(expr $(expr 7 % $firstDayOfMonth) + $BUJO_WEEK_START)
   fi
 
   if [[ $firstWeekStartOfMonth -lt $day ]]; then
     echo $(expr $(expr $(expr $day - $firstWeekStartOfMonth) / 7) + 1)
   else
-    local leap=$(isLeap $year)
     if [[ $month -eq 1 ]]; then
       year=$(expr $year - 1)
       month=12
     fi
+
+    local leap=$(isLeap $year)
+
     if [[ $leap -eq 1 && $month -eq 2 ]]; then
       local daysInMonth=29
     else
-      local daysInMonth=monthDays[$(expr $month - 1)]
+      local daysInMonth=${monthDays[$(expr $month - 1)]}
       echo $(getWeekOfMonth $year $(expr $month - 1) $(expr $day + $daysInMonth))
     fi
   fi
@@ -206,6 +209,7 @@ stringfmt() {
   local month=$(date +%m)
   local day=$(date +%d)
   local week=$(getWeekOfMonth $year $month $day)
+  if [[ $week -gt 4 ]]; then month=$(expr ${month} - 1); fi
   local hr=$(date +%H)
   local min=$(date +%M)
   out=${1/"%y"/$year}
