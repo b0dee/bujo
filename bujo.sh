@@ -4,6 +4,7 @@ set -e
 
 readonly BUJO_WEEK_START="${BUJO_WEEK_START:=1}"
 readonly BUJO_ROOT="${BUJO_ROOT:=$HOME/.bujo}"
+readonly EDITOR="${EDITOR:=nano}"
 readonly BUJO_EDITOR="${BUJO_EDITOR:=$EDITOR}"
 readonly BUJO_FILENAME="${BUJO_FILENAME:=%y%m%w}"
 readonly BUJO_TIMESTAMP_FORMAT="${BUJO_TIMESTAMP_FORMAT:=%y-%m-%d@%H:%M}"
