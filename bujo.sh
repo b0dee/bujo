@@ -231,30 +231,26 @@ titlecase() {
 main() { 
   local content="${INPUT_STRING[@]}"
   local filepath="${BUJO_ROOT/"~"/"$HOME"}/"
+  local fname="${BUJO_FILENAME}"
+  local fext=${BUJO_FILE_EXT}
   if ! [[ -z ${COLLECTION} ]]; then 
     local dirregex="/$"
     local extregex="[.]" # Assume any filename with a '.' in denotes ext provided after
-    local fext=${BUJO_FILE_EXT}
-    local collection=$COLLECTION
-    if [[ $(basename ${COLLECTION}) =~ ${extregex} ]]; then
-      # Don't mess with the provided file ext
-      fext=""
-    fi
+    local collection="${COLLECTION}"
     if [[ ${COLLECTION} =~ $dirregex ]]; then
       collection="$COLLECTION/$BUJO_FILENAME"
     fi
-    filepath+=$(stringfmt "${collection/$BUJO_FILE_EXT/""}${fext}";) 
+    fname=$(basename -- "${collection}")
+    if [[ $(basename -- "${collection}") =~ ${extregex} ]]; then fext=".${fname##*.}"; fi
+    filepath+=$(stringfmt "${collection/$fext/""}${fext}";) 
   else
-    filepath+=$(stringfmt "${BUJO_FILENAME}${BUJO_FILE_EXT}")
+    filepath+=$(stringfmt "${fname}${fext}")
   fi
   mkdir -p $(dirname "$filepath")
 
   if ! [[ -f "${filepath}" ]]; then
-    if ! [[ -z ${HEADING} ]]; then 
-      printf "%s\n\n" "# $(titlecase "$(stringfmt "${HEADING}")")" >> "${filepath}"
-    else
-      printf "%s\n\n" "# $(titlecase "$(basename -s ${BUJO_FILE_EXT} "${filepath}")")" >> "${filepath}"
-    fi
+    local heading="${HEADING:=$(basename -s "${fext}" "${filepath}")}"
+    printf "%s\n\n" "# $(titlecase "${heading}")" >> "${filepath}"
   fi
 
   if ! [[ -z ${TASK} ]]; then 
