@@ -222,6 +222,12 @@ stringfmt() {
   echo $out
 }
 
+# args: inputstr
+titlecase() {
+  if [[ -z $1 ]]; then fatal "titlecase() expects input string to format"; fi
+  echo "$1" | sed -r "s/( *[a-z])([a-z]+)( |$)/\U\1\L\2\3/g"
+}
+
 main() { 
   local content="${INPUT_STRING[@]}"
   local filepath="${BUJO_ROOT/"~"/"$HOME"}/"
@@ -240,9 +246,9 @@ main() {
 
   if ! [[ -f "${filepath}" ]]; then
     if ! [[ -z ${HEADING} ]]; then 
-      printf "%s\n\n" "# $(stringfmt "${HEADING}" | sed -r "s/( *[a-z])([a-z]+)( |$)/\U\1\L\2\3/g")" >> "${filepath}"
+      printf "%s\n\n" "# $(titlecase "$(stringfmt "${HEADING}")")" >> "${filepath}"
     else
-      printf "%s\n\n" "# $(basename -s ${BUJO_FILE_EXT} "${filepath}" | sed -r "s/( *[a-z])([a-z]+)( |$)/\U\1\L\2\3/g")" >> "${filepath}"
+      printf "%s\n\n" "# $(titlecase "$(basename -s ${BUJO_FILE_EXT} "${filepath}")")" >> "${filepath}"
     fi
   fi
 
