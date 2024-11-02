@@ -233,12 +233,17 @@ main() {
   local filepath="${BUJO_ROOT/"~"/"$HOME"}/"
   if ! [[ -z ${COLLECTION} ]]; then 
     local dirregex="/$"
+    local extregex="[.]" # Assume any filename with a '.' in denotes ext provided after
+    local fext=${BUJO_FILE_EXT}
     local collection=$COLLECTION
+    if [[ $(basename ${COLLECTION}) =~ ${extregex} ]]; then
+      # Don't mess with the provided file ext
+      fext=""
+    fi
     if [[ ${COLLECTION} =~ $dirregex ]]; then
       collection="$COLLECTION/$BUJO_FILENAME"
     fi
-    # TODO - If collection ends in '/' it should treat collection provided as a folder and append default filename 
-    filepath+=$(stringfmt "${collection/$BUJO_FILE_EXT/""}${BUJO_FILE_EXT}";) 
+    filepath+=$(stringfmt "${collection/$BUJO_FILE_EXT/""}${fext}";) 
   else
     filepath+=$(stringfmt "${BUJO_FILENAME}${BUJO_FILE_EXT}")
   fi
